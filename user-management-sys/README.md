@@ -10,6 +10,8 @@ A Quasar and Axios project
 
 - Populating a q-table with data from API endpoint
 
+- How to access the values of nested properties by iterating over each property in the JSON
+
 ## Hardships
 
 - Parsing or reading nested objects from the API endpoint
