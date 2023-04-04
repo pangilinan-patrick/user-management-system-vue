@@ -1,3 +1,16 @@
+<!--
+    1. Include all data except for latitude and longitude (geo)
+    2. Reset the form once there's input 
+    3. AddUser: Email must end with @gmail.com
+    4. Username must be >8 characters long 
+    5. Phone number must be PH format
+        - Starts at 09 and consist only 11 chars
+    6. Zipcode must only accept nums
+    7. Website must end with .pixel8 
+    8. Rest of the fields are required
+    9. Provide a modal when deleting an item
+-->
+
 <script>
 import { ref } from "vue";
 import axios from "axios";
