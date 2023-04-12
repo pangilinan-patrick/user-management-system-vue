@@ -20,11 +20,28 @@
     <h5 class="q-my-none q-mb-md">Add User</h5>
     <q-form ref="form" @submit.prevent="submitForm" class="q-gutter-md">
       <div class="q-gutter-md row items-start">
-        <q-input filled v-model="form.name" label="Full Name *" required></q-input>
-        <q-input filled v-model="form.username" label="Username *" required></q-input>
+        <q-input
+          filled
+          v-model="form.name"
+          label="Full Name *"
+          required
+        ></q-input>
+        <q-input
+          filled
+          v-model="form.username"
+          label="Username *"
+          required
+        ></q-input>
       </div>
       <div class="q-gutter-md row items-start">
-        <q-input filled v-model="form.email" label="Email *" type="email" required :rules="[emailRule]"></q-input>
+        <q-input
+          filled
+          v-model="form.email"
+          label="Email *"
+          type="email"
+          required
+          :rules="[emailRule]"
+        ></q-input>
       </div>
       <q-btn type="submit" label="Submit" color="primary"></q-btn>
     </q-form>
@@ -33,6 +50,8 @@
 
 <script>
 import { ref } from "vue";
+import axios from "axios";
+import eventBus from "components/eventBus";
 
 export default {
   data() {
@@ -80,6 +99,24 @@ export default {
         });
         return;
       }
+      // console.log(this.form);
+
+      this.$router.push("/list-of-users");
+      // btnLoadingState.value = true;
+      axios
+        // add the todo entry using post
+        .post("https://jsonplaceholder.typicode.com/users", this.form)
+        .then((response) => {
+          if (response.status === 201) {
+            // get the current max ID from the table and increment the id for the new item
+            // const maxId = Math.max(...rows.value.map((r) => r.id));
+            const newItem = { ...response.data };
+            // console.log(newItem);
+            // mergedRows.value.unshift(newItem);
+            eventBus.emit("user-added", newItem);
+          }
+          // btnLoadingState.value = false;
+        });
 
       // display a success message
       this.$q.notify({

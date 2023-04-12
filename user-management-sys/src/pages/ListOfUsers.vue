@@ -12,14 +12,14 @@
 -->
 
 <script>
-import { ref } from "vue";
+import { ref, nextTick, onBeforeUnmount } from "vue";
 import axios from "axios";
+import eventBus from "components/eventBus";
+import { mergedRows, getUsers } from "components/Users";
 
 export default {
   name: "list-of-users",
   setup() {
-    // initialize rows and columns with metadata
-    let rows = ref([]);
     let columns = ref([
       {
         name: "id",
@@ -101,36 +101,18 @@ export default {
       },
     ]);
 
-    // initialize mergedRows for nested data
-    const mergedRows = ref([]);
-
-    const getUsers = () => {
-      axios
-        .get("https://jsonplaceholder.typicode.com/users")
-        .then((response) => {
-          // impute the value of response into each row
-          rows.value = response.data;
-          // iterate over each property of response.data
-          mergedRows.value = response.data.map((row) => {
-            return {
-              // add existing non-nested values from row
-              ...row,
-              // nested values
-              street: row.address.street,
-              suite: row.address.suite,
-              city: row.address.city,
-              zipcode: row.address.zipcode,
-              companyName: row.company.name,
-              catchPhrase: row.company.catchPhrase,
-              bs: row.company.bs,
-            };
-          });
-        });
-    };
-
     getUsers();
 
-    return { rows, columns, mergedRows };
+    eventBus.on("user-added", (newUser) => {
+      mergedRows.value.unshift(newUser);
+    });
+
+    // destroy event listening upon unmount
+    onBeforeUnmount(() => {
+      eventBus.off("user-added");
+    });
+
+    return { columns, mergedRows };
   },
 };
 </script>
