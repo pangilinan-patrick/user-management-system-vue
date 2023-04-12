@@ -8,13 +8,19 @@ A Quasar and Axios project
 
 - Fetching data with GET
 
+- Adding to the api with POST
+
 - Populating a q-table with data from API endpoint
 
 - How to access the values of nested properties by iterating over each property in the JSON
 
+- Using json-server to host local REST API
+
 ## Hardships
 
 - Parsing or reading nested objects from the API endpoint
+
+- Keeping the data persistent when navigating away from ListOfUsers page
 
 ## Install the dependencies
 
