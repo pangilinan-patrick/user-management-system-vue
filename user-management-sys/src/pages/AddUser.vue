@@ -43,6 +43,68 @@
           :rules="[emailRule]"
         ></q-input>
       </div>
+      <div class="q-gutter-md row items-start">
+        <q-input filled v-model="form.phone" label="Phone *" required></q-input>
+        <q-input
+          filled
+          v-model="form.website"
+          label="Website *"
+          required
+        ></q-input>
+      </div>
+      <!-- address -->
+      <h6 class="q-my-none q-mb-md">Address</h6>
+      <div class="q-gutter-md row items-start">
+        <q-input
+          filled
+          v-model="form.address.street"
+          label="Street *"
+          required
+        ></q-input>
+        <q-input
+          filled
+          v-model="form.address.suite"
+          label="Suite *"
+          required
+        ></q-input>
+        <q-input
+          filled
+          v-model="form.address.city"
+          label="City *"
+          required
+        ></q-input>
+        <q-input
+          filled
+          v-model="form.address.zipcode"
+          label="Zipcode *"
+          required
+        ></q-input>
+      </div>
+      <!-- Company -->
+      <h6 class="q-my-none q-mb-md">Company</h6>
+      <div class="q-gutter-md row items-start">
+        <q-input
+          filled
+          v-model="form.company.name"
+          label="Company Name *"
+          required
+        ></q-input>
+        <q-input
+          filled
+          v-model="form.company.bs"
+          label="BS *"
+          required
+        ></q-input>
+        <q-input
+          filled
+          v-model="form.company.catchPhrase"
+          label="Catch Phrase *"
+          required
+        ></q-input>
+      </div>
+      <!-- address: street, suite, city, zipcode-->
+      <!-- phone, website -->
+      <!-- company: name, catchPhrase, bs -->
       <q-btn type="submit" label="Submit" color="primary"></q-btn>
     </q-form>
   </div>
@@ -51,6 +113,7 @@
 <script>
 import { ref } from "vue";
 import axios from "axios";
+import { mergedRows } from "../composables/Users";
 import eventBus from "components/eventBus";
 
 export default {
@@ -61,15 +124,19 @@ export default {
         name: null,
         username: null,
         email: null,
-        street: null,
-        suite: null,
-        city: null,
-        zipcode: null,
+        address: {
+          street: null,
+          suite: null,
+          city: null,
+          zipcode: null,
+        },
         phone: null,
         website: null,
-        companyName: null,
-        catchPhrase: null,
-        bs: null,
+        company: {
+          name: null,
+          catchPhrase: null,
+          bs: null,
+        },
       }),
     };
   },
@@ -101,16 +168,21 @@ export default {
       }
       // console.log(this.form);
 
+      let maxId = 0;
+      maxId = Math.max(...mergedRows._value.map((r) => r.id));
+      console.log("sdf", maxId + 1, mergedRows);
+      this.form.id = maxId + 1;
+
       this.$router.push("/list-of-users");
       // btnLoadingState.value = true;
       axios
         // add the todo entry using post
-        .post("https://jsonplaceholder.typicode.com/users", this.form)
+        .post("http://localhost:3000/users", this.form)
         .then((response) => {
           if (response.status === 201) {
             // get the current max ID from the table and increment the id for the new item
-            // const maxId = Math.max(...rows.value.map((r) => r.id));
-            const newItem = { ...response.data };
+            // const maxId = Math.max(...response.data.map((r) => r.id));
+            const newItem = { ...response.data, id: maxId + 1 };
             // console.log(newItem);
             // mergedRows.value.unshift(newItem);
             eventBus.emit("user-added", newItem);

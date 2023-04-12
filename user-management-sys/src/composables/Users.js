@@ -1,13 +1,13 @@
-import { ref } from "vue";
+import { ref, onBeforeUnmount } from "vue";
 import axios from "axios";
+import eventBus from "src/components/eventBus";
 
 // initialize mergedRows for nested data
 const mergedRows = ref([]);
 
 const getUsers = () => {
-  axios.get("https://jsonplaceholder.typicode.com/users").then((response) => {
+  axios.get("http://localhost:3000/users").then((response) => {
     // impute the value of response into each row
-    // rows.value = response.data;
     // iterate over each property of response.data
     mergedRows.value = response.data.map((row) => {
       return {

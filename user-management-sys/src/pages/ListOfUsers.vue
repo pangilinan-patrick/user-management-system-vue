@@ -15,7 +15,7 @@
 import { ref, nextTick, onBeforeUnmount } from "vue";
 import axios from "axios";
 import eventBus from "components/eventBus";
-import { mergedRows, getUsers } from "components/Users";
+import { getUsers, mergedRows } from "../composables/Users";
 
 export default {
   name: "list-of-users",
@@ -104,6 +104,7 @@ export default {
     getUsers();
 
     eventBus.on("user-added", (newUser) => {
+      console.log(newUser);
       mergedRows.value.unshift(newUser);
     });
 
@@ -111,6 +112,10 @@ export default {
     onBeforeUnmount(() => {
       eventBus.off("user-added");
     });
+
+    const asdf = () => {
+      console.log();
+    };
 
     return { columns, mergedRows };
   },
