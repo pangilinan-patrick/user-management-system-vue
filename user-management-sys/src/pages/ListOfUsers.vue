@@ -1,16 +1,3 @@
-<!--
-    1. Include all data except for latitude and longitude (geo)
-    2. Reset the form once there's input 
-    3. AddUser: Email must end with @gmail.com
-    4. Username must be >8 characters long 
-    5. Phone number must be PH format
-        - Starts at 09 and consist only 11 chars
-    6. Zipcode must only accept nums
-    7. Website must end with .pixel8 
-    8. Rest of the fields are required
-    9. Provide a modal when deleting an item
--->
-
 <script>
 import { ref, nextTick, onBeforeUnmount } from "vue";
 import axios from "axios";
@@ -21,6 +8,24 @@ export default {
   name: "list-of-users",
   setup() {
     let columns = ref([
+      {
+        name: "actions",
+        label: "Actions",
+        field: "id",
+        align: "center",
+        // define a custom slot to render the button for each row
+        // you can use the `scope` parameter to access the row data
+        // and define the button behavior
+        // this example renders a button with a click event to show a dialog
+        // but you can replace it with your own button component and behavior
+        // or use any other UI framework or HTML element
+        format: (val, row) => {
+          return {
+            slot: "actions",
+            value: row,
+          };
+        },
+      },
       {
         name: "id",
         label: "ID",
@@ -125,6 +130,23 @@ export default {
 <template>
   <q-page class="q-ma-x1">
     <!-- table showing the data fetched from API -->
-    <q-table title="Todos" :rows="mergedRows" :columns="columns" row-key="id" />
+    <q-table
+      flat
+      bordered
+      title="Todos"
+      :rows="mergedRows"
+      :columns="columns"
+      row-key="id"
+    >
+      <template v-slot:body-cell-actions="props">
+        <q-td :props="props">
+          <!-- <q-btn color="primary" @click="showDialog(props.value)">
+            Show Dialog
+          </q-btn> -->
+          <q-btn class="q-pa-xs q-ma-xs" color="primary">Edit</q-btn>
+          <q-btn class="q-pa-xs q-ma-xs" color="negative">Delete</q-btn>
+        </q-td>
+      </template>
+    </q-table>
   </q-page>
 </template>

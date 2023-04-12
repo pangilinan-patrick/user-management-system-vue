@@ -3,9 +3,12 @@
 <!-- - When the form is submitted, use Axios to send a POST request to the server with the user information. -->
 <!---->
 <!-- Step 4: Implement PUT and DELETE requests -->
-<!-- In the List of Users page, add an "Edit" button next to each user. When the button is clicked, navigate to the Add User page and pre-populate the form with the user information. -->
-<!-- Add a "Delete" button next to each user. When the button is clicked, send a DELETE request to the server with the user ID. -->
-<!-- In the Add User page, modify the form submission logic to send a PUT request if the form is pre-populated, otherwise send a POST request. -->
+<!-- In the List of Users page, add an "Edit" button next to each user.
+  When the button is clicked, navigate to the Add User page and pre-populate the form with the user information. -->
+<!-- Add a "Delete" button next to each user.
+  When the button is clicked, send a DELETE request to the server with the user ID. -->
+<!-- In the Add User page, modify the form submission logic to send a PUT request if the form is pre-populated,
+  otherwise send a POST request. -->
 <!---->
 <!-- Step 5: Test the User Management System -->
 <!-- Test the GET, POST, PUT, and DELETE request methods by adding, editing, and deleting users. -->
@@ -15,11 +18,25 @@
 <!-- Create a new branch and name it “quasar-axios-user-management” -->
 <!-- Push the project folder to the repository you have created in Gitlab. -->
 
+<!--
+    1. Include all data except for latitude and longitude (geo)
+    2. Reset the form once there's input 
+    3. AddUser: Email must end with @gmail.com
+    4. Username must be >8 characters long 
+    5. Phone number must be PH format
+        - Starts at 09 and consist only 11 chars
+    6. Zipcode must only accept nums
+    7. Website must end with .pixel8 
+    8. Rest of the fields are required
+    9. Provide a modal when deleting an item
+-->
+
 <template>
   <div class="q-pa-md" style="max-width: 600px">
     <h5 class="q-my-none q-mb-md">Add User</h5>
     <q-form ref="form" @submit.prevent="submitForm" class="q-gutter-md">
       <div class="q-gutter-md row items-start">
+        <!-- name, username, email, phone, website -->
         <q-input
           filled
           v-model="form.name"
@@ -52,7 +69,7 @@
           required
         ></q-input>
       </div>
-      <!-- address -->
+      <!-- address: street, suite, city, zipcode -->
       <h6 class="q-my-none q-mb-md">Address</h6>
       <div class="q-gutter-md row items-start">
         <q-input
@@ -80,7 +97,7 @@
           required
         ></q-input>
       </div>
-      <!-- Company -->
+      <!-- Company: name, bs, catchPhrase-->
       <h6 class="q-my-none q-mb-md">Company</h6>
       <div class="q-gutter-md row items-start">
         <q-input
@@ -102,9 +119,6 @@
           required
         ></q-input>
       </div>
-      <!-- address: street, suite, city, zipcode-->
-      <!-- phone, website -->
-      <!-- company: name, catchPhrase, bs -->
       <q-btn type="submit" label="Submit" color="primary"></q-btn>
     </q-form>
   </div>
@@ -209,6 +223,15 @@ export default {
       this.form.name = "";
       this.form.username = "";
       this.form.email = "";
+      this.form.address.street = "";
+      this.form.address.suite = "";
+      this.form.address.city = "";
+      this.form.address.zipcode = "";
+      this.form.phone = "";
+      this.form.website = "";
+      this.form.company.name = "";
+      this.form.company.catchPhrase = "";
+      this.form.company.bs = "";
     },
   },
 };

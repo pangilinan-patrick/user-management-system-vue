@@ -1,6 +1,5 @@
-import { ref, onBeforeUnmount } from "vue";
+import { ref } from "vue";
 import axios from "axios";
-import eventBus from "src/components/eventBus";
 
 // initialize mergedRows for nested data
 const mergedRows = ref([]);
