@@ -172,7 +172,7 @@ export default {
     <q-table
       flat
       bordered
-      title="Todos"
+      title="List of Users"
       :rows="mergedRows"
       :columns="columns"
       row-key="id"
