@@ -137,28 +137,45 @@ export default {
     }
 
     const deleteSelected = (selected) => {
-      axios
-        // delete the selected entry
-        .delete(`http://localhost:3000/users/${selected.value.id}`)
-        .then((response) => {
-          if (response.status === 200) {
-            // create a new array without the selected row using filter
-            mergedRows.value = mergedRows.value.filter(
-              (row) => row.id !== selected.value.id
-            );
+      $q.dialog({
+        dark: true,
+        title: "Confirm",
+        message: `Would you like to delete entry ID ${selected.value.id}?`,
+        cancel: true,
+        persistent: true,
+      })
+        .onOk(() => {
+          axios
+            // delete the selected entry
+            .delete(`http://localhost:3000/users/${selected.value.id}`)
+            .then((response) => {
+              if (response.status === 200) {
+                // create a new array without the selected row using filter
+                mergedRows.value = mergedRows.value.filter(
+                  (row) => row.id !== selected.value.id
+                );
 
-            rowSelected.value = {};
-          }
-          // btnLoadingState.value = false;
+                rowSelected.value = {};
+              }
+              // btnLoadingState.value = false;
+            });
+
+          // display a success message
+          $q.notify({
+            color: "red-4",
+            textColor: "white",
+            icon: "clear",
+            message: `Deleted entry ID ${selected.value.id}!`,
+          });
+        })
+        .onCancel(() => {
+          $q.notify({
+            color: "primary",
+            textColor: "white",
+            icon: "notifications",
+            message: "Operation cancelled.",
+          });
         });
-
-      // display a success message
-      $q.notify({
-        color: "red-4",
-        textColor: "white",
-        icon: "clear",
-        message: "Deleted!",
-      });
     };
 
     return { columns, mergedRows, editSelected, deleteSelected };

@@ -9,6 +9,7 @@
 // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js
 
 const ESLintPlugin = require("eslint-webpack-plugin");
+const { Dialog } = require("quasar");
 
 const { configure } = require("quasar/wrappers");
 
@@ -97,7 +98,7 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ["Notify"],
+      plugins: ["Notify", "Dialog"],
     },
 
     // animations: 'all', // --- includes all animations
