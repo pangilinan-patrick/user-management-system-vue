@@ -4,10 +4,12 @@ import { rowSelected, getUsers, mergedRows, form } from "../composables/Users";
 import axios from "axios";
 import eventBus from "components/eventBus";
 import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 
 export default {
   name: "list-of-users",
   setup() {
+    const $q = useQuasar();
     let columns = ref([
       {
         name: "actions",
@@ -134,7 +136,32 @@ export default {
       // console.log(props);
     }
 
-    return { columns, mergedRows, editSelected };
+    const deleteSelected = (selected) => {
+      axios
+        // delete the selected entry
+        .delete(`http://localhost:3000/users/${selected.value.id}`)
+        .then((response) => {
+          if (response.status === 200) {
+            // create a new array without the selected row using filter
+            mergedRows.value = mergedRows.value.filter(
+              (row) => row.id !== selected.value.id
+            );
+
+            rowSelected.value = {};
+          }
+          // btnLoadingState.value = false;
+        });
+
+      // display a success message
+      $q.notify({
+        color: "red-4",
+        textColor: "white",
+        icon: "clear",
+        message: "Deleted!",
+      });
+    };
+
+    return { columns, mergedRows, editSelected, deleteSelected };
   },
 };
 </script>

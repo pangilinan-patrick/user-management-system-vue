@@ -1,19 +1,3 @@
-<!-- Step 3: Create an Add User page -->
-<!-- - Create a form to input the user information. -->
-<!-- - When the form is submitted, use Axios to send a POST request to the server with the user information. -->
-<!---->
-<!-- Step 4: Implement PUT and DELETE requests -->
-<!-- In the List of Users page, add an "Edit" button next to each user.
-  When the button is clicked, navigate to the Add User page and pre-populate the form with the user information. -->
-<!-- Add a "Delete" button next to each user.
-  When the button is clicked, send a DELETE request to the server with the user ID. -->
-<!-- In the Add User page, modify the form submission logic to send a PUT request if the form is pre-populated,
-  otherwise send a POST request. -->
-<!---->
-<!-- Step 5: Test the User Management System -->
-<!-- Test the GET, POST, PUT, and DELETE request methods by adding, editing, and deleting users. -->
-<!-- Verify that the table in the List of Users page is updated accordingly. -->
-<!---->
 <!-- Step 6: Save the project folder to the repository -->
 <!-- Create a new branch and name it “quasar-axios-user-management” -->
 <!-- Push the project folder to the repository you have created in Gitlab. -->
@@ -127,7 +111,6 @@
         :label="rowSelected === true ? 'Edit' : 'Add'"
         :color="rowSelected === true ? 'positive' : 'primary'"
       ></q-btn>
-      <q-btn @click="editForm()" label="Edit" color="positive"></q-btn>
       <q-btn @click="testInput()" label="Test" color="positive"></q-btn>
     </q-form>
   </div>
@@ -222,7 +205,6 @@ export default {
     };
 
     const editForm = () => {
-      console.log("edit");
       axios
         // add the todo entry using post
         .put(`http://localhost:3000/users/${form.value.id}`, form.value)

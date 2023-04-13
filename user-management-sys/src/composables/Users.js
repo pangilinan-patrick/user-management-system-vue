@@ -28,21 +28,21 @@ const getUsers = () => {
 };
 const form = ref({
   id: 1,
-  name: "",
+  name: null,
   username: null,
   email: null,
   address: {
-    street: "",
-    suite: "",
-    city: "",
-    zipcode: "",
+    street: null,
+    suite: null,
+    city: null,
+    zipcode: null,
   },
   phone: null,
   website: null,
   company: {
-    name: "",
-    catchPhrase: "",
-    bs: "",
+    name: null,
+    catchPhrase: null,
+    bs: null,
   },
 });
 
