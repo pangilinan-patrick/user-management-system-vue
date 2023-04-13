@@ -18,21 +18,28 @@
 -->
 
 <template>
-  <div class="q-pa-md" style="max-width: 600px">
-    <h5 class="q-my-none q-mb-md">Add User</h5>
+  <div class="q-pa-md q-ma-sm form-container">
+    <div class="form-header">
+      &nbsp;
+      <h5 class="q-my-none q-mb-md doc-card-title">User Form</h5>
+      &nbsp;
+    </div>
     <q-form
+      class="q-pa-md form-inside"
       @submit.prevent="rowSelected === true ? editForm() : submitForm()"
-      class="q-gutter-md"
     >
+      <h6 class="q-my-none q-mb-md">User Details</h6>
       <div class="q-gutter-md row items-start">
         <!-- name, username, email, phone, website -->
         <q-input
+          class="col"
           filled
           v-model="form.name"
           label="Full Name *"
           required
         ></q-input>
         <q-input
+          class="col"
           filled
           v-model="form.username"
           label="Username *"
@@ -42,6 +49,7 @@
       </div>
       <div class="q-gutter-md row items-start">
         <q-input
+          class="col"
           filled
           v-model="form.email"
           label="Email *"
@@ -52,6 +60,7 @@
       </div>
       <div class="q-gutter-md row items-start">
         <q-input
+          class="col"
           filled
           v-model="form.phone"
           label="Phone *"
@@ -59,6 +68,7 @@
           :rules="[phoneRule()]"
         ></q-input>
         <q-input
+          class="col"
           filled
           v-model="form.website"
           label="Website *"
@@ -70,24 +80,28 @@
       <h6 class="q-my-none q-mb-md">Address</h6>
       <div class="q-gutter-md row items-start">
         <q-input
+          class="col"
           filled
           v-model="form.address.street"
           label="Street *"
           required
         ></q-input>
         <q-input
+          class="col"
           filled
           v-model="form.address.suite"
           label="Suite *"
           required
         ></q-input>
         <q-input
+          class="col"
           filled
           v-model="form.address.city"
           label="City *"
           required
         ></q-input>
         <q-input
+          class="col"
           filled
           v-model="form.address.zipcode"
           label="Zipcode *"
@@ -99,18 +113,21 @@
       <h6 class="q-my-none q-mb-md">Company</h6>
       <div class="q-gutter-md row items-start">
         <q-input
+          class="col"
           filled
           v-model="form.company.name"
           label="Company Name *"
           required
         ></q-input>
         <q-input
+          class="col"
           filled
           v-model="form.company.bs"
           label="BS *"
           required
         ></q-input>
         <q-input
+          class="col"
           filled
           v-model="form.company.catchPhrase"
           label="Catch Phrase *"
@@ -119,21 +136,30 @@
       </div>
       <q-btn
         type="submit"
+        class="form-button"
         :label="rowSelected === true ? 'Edit' : 'Add'"
-        :color="rowSelected === true ? 'positive' : 'primary'"
+        :color="rowSelected === true ? 'primary' : 'positive'"
       ></q-btn>
-      <q-btn @click="testInput()" label="Test" color="positive"></q-btn>
+      <q-btn
+        class="form-button"
+        label="Cancel"
+        color="negative"
+        @click="cancelEdit()"
+        :class="rowSelected === true ? 'visible' : 'hidden'"
+      ></q-btn>
+      <!-- FOR TESTING PURPOSES -->
+      <!-- <q-btn @click="testInput()" label="Test" color="positive"></q-btn> -->
     </q-form>
+    <div class="form-footer"></div>
   </div>
 </template>
 
 <script>
 import { ref } from "vue";
-import axios from "axios";
 import { rowSelected, mergedRows, form } from "../composables/Users";
-import eventBus from "components/eventBus";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
+import axios from "axios";
 
 export default {
   setup() {
@@ -210,8 +236,7 @@ export default {
             // const maxId = Math.max(...response.data.map((r) => r.id));
             const newItem = { ...response.data, id: maxId + 1 };
             // console.log(newItem);
-            // mergedRows.value.unshift(newItem);
-            eventBus.emit("user-added", newItem);
+            mergedRows.value.unshift(newItem);
           }
           // btnLoadingState.value = false;
         });
@@ -244,6 +269,13 @@ export default {
       form.value.company.bs = "";
     };
 
+    const cancelEdit = () => {
+      resetForm();
+
+      rowSelected.value = {};
+      router.push("/list-of-users");
+    };
+
     const editForm = () => {
       axios
         // add the todo entry using post
@@ -253,8 +285,6 @@ export default {
             // update the entry in the selected index
             Object.assign(mergedRows.value[form.value.id], form.value);
             // reset the input values after update
-            resetForm();
-            rowSelected.value = {};
           }
           // btnLoadingState.value = false;
         });
@@ -267,29 +297,31 @@ export default {
         message: "Query edited!",
       });
 
+      resetForm();
       router.push("/list-of-users");
     };
 
-    const testInput = () => {
-      form.value.name = "wef";
-      form.value.username = "sdf";
-      form.value.email = "woiejf@gmail.com";
-      form.value.address.street = "wefjo[j]";
-      form.value.address.suite = "oiewjf";
-      form.value.address.city = "woiej";
-      form.value.address.zipcode = "woiejf";
-      form.value.phone = "weifj";
-      form.value.website = "eifj";
-      form.value.company.name = "weifj";
-      form.value.company.catchPhrase = "weifj";
-      form.value.company.bs = "weifj";
-      $q.notify({
-        color: "green-4",
-        textColor: "white",
-        icon: "cloud_done",
-        message: "Tested",
-      });
-    };
+    // FOR TESTING PURPOSES
+    // const testInput = () => {
+    //   form.value.name = "wef";
+    //   form.value.username = "sadfawefaweff";
+    //   form.value.email = "woiejf@gmail.com";
+    //   form.value.address.street = "wefjo[j]";
+    //   form.value.address.suite = "oiewjf";
+    //   form.value.address.city = "woiej";
+    //   form.value.address.zipcode = "324";
+    //   form.value.phone = "09238423985";
+    //   form.value.website = "eifj.pixel8";
+    //   form.value.company.name = "weifj";
+    //   form.value.company.catchPhrase = "weifj";
+    //   form.value.company.bs = "weifj";
+    //   $q.notify({
+    //     color: "green-4",
+    //     textColor: "white",
+    //     icon: "cloud_done",
+    //     message: "Tested",
+    //   });
+    // };
 
     return {
       form,
@@ -301,7 +333,8 @@ export default {
       submitForm,
       resetForm,
       editForm,
-      testInput,
+      cancelEdit,
+      // testInput,
       rowSelected,
     };
   },

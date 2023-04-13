@@ -1,15 +1,15 @@
 <script>
-import { ref, nextTick, onBeforeUnmount } from "vue";
+import { ref } from "vue";
 import { rowSelected, getUsers, mergedRows, form } from "../composables/Users";
-import axios from "axios";
-import eventBus from "components/eventBus";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
+import axios from "axios";
 
 export default {
   name: "list-of-users",
   setup() {
     const $q = useQuasar();
+
     let columns = ref([
       {
         name: "actions",
@@ -105,35 +105,16 @@ export default {
 
     getUsers();
 
-    eventBus.on("user-added", (newUser) => {
-      console.log(newUser);
-      mergedRows.value.unshift(newUser);
-    });
-
     const router = useRouter();
-    // destroy event listening upon unmount
-    onBeforeUnmount(() => {
-      eventBus.off("user-added");
-    });
 
     function editSelected(selected) {
-      form.value.id = selected.value.id;
-      form.value.name = selected.value.name;
-      form.value.username = selected.value.username;
-      form.value.email = selected.value.email;
-      form.value.address.street = selected.value.address.street;
-      form.value.address.suite = selected.value.address.suite;
-      form.value.address.city = selected.value.address.city;
-      form.value.address.zipcode = selected.value.address.zipcode;
-      form.value.phone = selected.value.phone;
-      form.value.website = selected.value.website;
-      form.value.company.name = selected.value.company.name;
-      form.value.company.bs = selected.value.company.bs;
-      form.value.company.catchPhrase = selected.value.company.catchPhrase;
+      form.value = {
+        ...selected.value,
+        address: { ...selected.value.address },
+        company: { ...selected.value.company },
+      };
       rowSelected.value = true;
-
       router.push("/add-user");
-      // console.log(props);
     }
 
     const deleteSelected = (selected) => {
@@ -170,7 +151,7 @@ export default {
         })
         .onCancel(() => {
           $q.notify({
-            color: "primary",
+            color: "blue-4",
             textColor: "white",
             icon: "notifications",
             message: "Operation cancelled.",
@@ -190,27 +171,25 @@ export default {
       flat
       bordered
       title="List of Users"
+      class="my-sticky-column-table q-ma-md"
       :rows="mergedRows"
       :columns="columns"
       row-key="id"
     >
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
-          <!-- <q-btn color="primary" @click="showDialog(props.value)">
-            Show Dialog
-          </q-btn> -->
           <q-btn
             @click="editSelected(props.value)"
             class="q-pa-xs q-ma-xs"
             color="primary"
-            >Edit</q-btn
-          >
+            icon="edit"
+          />
           <q-btn
             @click="deleteSelected(props.value)"
             class="q-pa-xs q-ma-xs"
             color="negative"
-            >Delete</q-btn
-          >
+            icon="delete"
+          />
         </q-td>
       </template>
     </q-table>

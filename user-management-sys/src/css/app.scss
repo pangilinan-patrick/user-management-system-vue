@@ -1,1 +1,144 @@
-// app global css in SCSS form
+$pixelBlue: #0ad3dd;
+$pixelDark: #011016;
+
+.q-header {
+  background-color: #011016;
+}
+
+// --== FORM ==-- //
+.form-container {
+  width: 45rem;
+  margin: auto;
+}
+
+.form-header {
+  background-color: lighten($pixelDark, 10);
+  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
+  border: solid lighten($pixelDark, 10) 2px;
+  height: 6.5em;
+}
+
+.form-footer {
+  background-color: lighten($pixelDark, 10);
+  border-bottom-left-radius: 1em;
+  border-bottom-right-radius: 1em;
+  border: solid lighten($pixelDark, 10) 2px;
+  height: 1em;
+}
+
+.form-inside {
+  //sdf
+  border: solid lighten($pixelDark, 10) 2px;
+}
+
+.form-button {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  margin-right: 1em;
+}
+
+.doc-card-title {
+  margin-left: -12px;
+  padding: 4px 8px 4px 28px;
+  position: relative;
+  border-radius: 3px 5px 5px 0;
+  background-color: $pixelDark;
+  color: white;
+  font-size: 18px;
+  letter-spacing: 0.7px;
+  width: 8em;
+}
+
+.doc-card-title:after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 0;
+  height: 0;
+  border: 0 solid transparent;
+  border-width: 9px 0 0 11px;
+  border-top-color: $pixelDark;
+}
+// --== FORM END ==-- //
+
+// --== TABLE ==-- //
+.my-sticky-column-table {
+  /* specifying max-width so the example can
+    highlight the sticky column on any browser window */
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+  .q-table__top {
+    background-color: $pixelDark;
+    color: white;
+  }
+  .q-table__bottom {
+    background-color: $pixelDark;
+    color: white;
+  }
+  .q-field__native {
+    color: white;
+  }
+  .q-icon {
+    color: white;
+  }
+  tr th {
+    background-color: lighten($pixelDark, 20);
+    color: white;
+    font-weight: bold;
+  }
+  thead tr:first-child th:first-child {
+    /* bg color is important for th; just specify one */
+    background-color: lighten($pixelDark, 20);
+    color: white;
+  }
+
+  td:first-child {
+    background-color: lighten($pixelDark, 10);
+    color: white;
+  }
+
+  th:first-child,
+  td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+  }
+
+  /* width */
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background-color: lighten($pixelDark, 10);
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: $pixelBlue;
+    border-radius: 1em;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: lighten($pixelDark, 10);
+    width: 10px;
+    height: 10px;
+  }
+}
+
+.q-dialog__inner {
+  .q-card {
+    background-color: $pixelDark;
+  }
+
+  .q-btn__content {
+    span {
+      color: $pixelBlue;
+    }
+  }
+}
