@@ -13,6 +13,8 @@
     7. Website must end with .pixel8 
     8. Rest of the fields are required
     9. Provide a modal when deleting an item
+
+    Add a clear button to remove selected when editing
 -->
 
 <template>
@@ -35,6 +37,7 @@
           v-model="form.username"
           label="Username *"
           required
+          :rules="[usernameRule()]"
         ></q-input>
       </div>
       <div class="q-gutter-md row items-start">
@@ -48,12 +51,19 @@
         ></q-input>
       </div>
       <div class="q-gutter-md row items-start">
-        <q-input filled v-model="form.phone" label="Phone *" required></q-input>
+        <q-input
+          filled
+          v-model="form.phone"
+          label="Phone *"
+          required
+          :rules="[phoneRule()]"
+        ></q-input>
         <q-input
           filled
           v-model="form.website"
           label="Website *"
           required
+          :rules="[websiteRule()]"
         ></q-input>
       </div>
       <!-- address: street, suite, city, zipcode -->
@@ -82,6 +92,7 @@
           v-model="form.address.zipcode"
           label="Zipcode *"
           required
+          :rules="[zipcodeRule()]"
         ></q-input>
       </div>
       <!-- Company: name, bs, catchPhrase-->
@@ -129,6 +140,7 @@ export default {
     const $q = useQuasar();
     const router = useRouter();
 
+    // -----==== RULES ====----- //
     const emailRule = () => {
       return (val) => {
         if (!val) {
@@ -143,18 +155,46 @@ export default {
       };
     };
 
+    const usernameRule = () => {
+      return (val) => {
+        if (val && typeof val === "string" && val.length < 8) {
+          return "Username must be at least 8 characters long!";
+        }
+        return true;
+      };
+    };
+
+    const phoneRule = () => {
+      return (val) => {
+        if (!/^09\d{9}$/.test(val)) {
+          return "Phone number must be in the PH format";
+        }
+        return true;
+      };
+    };
+
+    const zipcodeRule = () => {
+      return (val) => {
+        if (!/^\d+$/.test(val)) {
+          return "Zipcode must only accept numbers";
+        }
+        return true;
+      };
+    };
+
+    const websiteRule = () => {
+      return (val) => {
+        if (!/\.pixel8$/.test(val)) {
+          return 'Website must end with ".pixel8"';
+        }
+        return true;
+      };
+    };
+
+    // -----==== RULES END ====----- //
+
     const submitForm = () => {
       // validate the form inputs
-      if (!form.value.name || !form.value.username || !form.value.email) {
-        // display an error message
-        $q.notify({
-          message: "All fields are required",
-          color: "negative",
-        });
-        return;
-      }
-      // console.log(form.value);
-
       let maxId = 0;
       maxId = Math.max(...mergedRows.value.map((r) => r.id));
       form.value.id = maxId + 1;
@@ -254,6 +294,10 @@ export default {
     return {
       form,
       emailRule,
+      usernameRule,
+      phoneRule,
+      websiteRule,
+      zipcodeRule,
       submitForm,
       resetForm,
       editForm,
