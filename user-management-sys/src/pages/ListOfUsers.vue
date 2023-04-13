@@ -1,8 +1,9 @@
 <script>
 import { ref, nextTick, onBeforeUnmount } from "vue";
+import { rowSelected, getUsers, mergedRows, form } from "../composables/Users";
 import axios from "axios";
 import eventBus from "components/eventBus";
-import { getUsers, mergedRows } from "../composables/Users";
+import { useRouter } from "vue-router";
 
 export default {
   name: "list-of-users",
@@ -13,12 +14,6 @@ export default {
         label: "Actions",
         field: "id",
         align: "center",
-        // define a custom slot to render the button for each row
-        // you can use the `scope` parameter to access the row data
-        // and define the button behavior
-        // this example renders a button with a click event to show a dialog
-        // but you can replace it with your own button component and behavior
-        // or use any other UI framework or HTML element
         format: (val, row) => {
           return {
             slot: "actions",
@@ -113,16 +108,33 @@ export default {
       mergedRows.value.unshift(newUser);
     });
 
+    const router = useRouter();
     // destroy event listening upon unmount
     onBeforeUnmount(() => {
       eventBus.off("user-added");
     });
 
-    const asdf = () => {
-      console.log();
-    };
+    function editSelected(selected) {
+      form.value.id = selected.value.id;
+      form.value.name = selected.value.name;
+      form.value.username = selected.value.username;
+      form.value.email = selected.value.email;
+      form.value.address.street = selected.value.address.street;
+      form.value.address.suite = selected.value.address.suite;
+      form.value.address.city = selected.value.address.city;
+      form.value.address.zipcode = selected.value.address.zipcode;
+      form.value.phone = selected.value.phone;
+      form.value.website = selected.value.website;
+      form.value.company.name = selected.value.company.name;
+      form.value.company.bs = selected.value.company.bs;
+      form.value.company.catchPhrase = selected.value.company.catchPhrase;
+      rowSelected.value = true;
 
-    return { columns, mergedRows };
+      router.push("/add-user");
+      // console.log(props);
+    }
+
+    return { columns, mergedRows, editSelected };
   },
 };
 </script>
@@ -143,8 +155,18 @@ export default {
           <!-- <q-btn color="primary" @click="showDialog(props.value)">
             Show Dialog
           </q-btn> -->
-          <q-btn class="q-pa-xs q-ma-xs" color="primary">Edit</q-btn>
-          <q-btn class="q-pa-xs q-ma-xs" color="negative">Delete</q-btn>
+          <q-btn
+            @click="editSelected(props.value)"
+            class="q-pa-xs q-ma-xs"
+            color="primary"
+            >Edit</q-btn
+          >
+          <q-btn
+            @click="deleteSelected(props.value)"
+            class="q-pa-xs q-ma-xs"
+            color="negative"
+            >Delete</q-btn
+          >
         </q-td>
       </template>
     </q-table>

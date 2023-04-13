@@ -34,7 +34,10 @@
 <template>
   <div class="q-pa-md" style="max-width: 600px">
     <h5 class="q-my-none q-mb-md">Add User</h5>
-    <q-form ref="form" @submit.prevent="submitForm" class="q-gutter-md">
+    <q-form
+      @submit.prevent="rowSelected === true ? editForm() : submitForm()"
+      class="q-gutter-md"
+    >
       <div class="q-gutter-md row items-start">
         <!-- name, username, email, phone, website -->
         <q-input
@@ -57,7 +60,7 @@
           label="Email *"
           type="email"
           required
-          :rules="[emailRule]"
+          :rules="[emailRule()]"
         ></q-input>
       </div>
       <div class="q-gutter-md row items-start">
@@ -119,7 +122,13 @@
           required
         ></q-input>
       </div>
-      <q-btn type="submit" label="Submit" color="primary"></q-btn>
+      <q-btn
+        type="submit"
+        :label="rowSelected === true ? 'Edit' : 'Add'"
+        :color="rowSelected === true ? 'positive' : 'primary'"
+      ></q-btn>
+      <q-btn @click="editForm()" label="Edit" color="positive"></q-btn>
+      <q-btn @click="testInput()" label="Test" color="positive"></q-btn>
     </q-form>
   </div>
 </template>
@@ -127,35 +136,17 @@
 <script>
 import { ref } from "vue";
 import axios from "axios";
-import { mergedRows } from "../composables/Users";
+import { rowSelected, mergedRows, form } from "../composables/Users";
 import eventBus from "components/eventBus";
+import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 
 export default {
-  data() {
-    return {
-      form: ref({
-        id: 1,
-        name: null,
-        username: null,
-        email: null,
-        address: {
-          street: null,
-          suite: null,
-          city: null,
-          zipcode: null,
-        },
-        phone: null,
-        website: null,
-        company: {
-          name: null,
-          catchPhrase: null,
-          bs: null,
-        },
-      }),
-    };
-  },
-  computed: {
-    emailRule() {
+  setup() {
+    const $q = useQuasar();
+    const router = useRouter();
+
+    const emailRule = () => {
       return (val) => {
         if (!val) {
           return "Email is required";
@@ -167,31 +158,29 @@ export default {
           return true;
         }
       };
-    },
-  },
-  methods: {
-    submitForm() {
+    };
+
+    const submitForm = () => {
       // validate the form inputs
-      if (!this.form.name || !this.form.username || !this.form.email) {
+      if (!form.value.name || !form.value.username || !form.value.email) {
         // display an error message
-        this.$q.notify({
+        $q.notify({
           message: "All fields are required",
           color: "negative",
         });
         return;
       }
-      // console.log(this.form);
+      // console.log(form.value);
 
       let maxId = 0;
-      maxId = Math.max(...mergedRows._value.map((r) => r.id));
-      console.log("sdf", maxId + 1, mergedRows);
-      this.form.id = maxId + 1;
+      maxId = Math.max(...mergedRows.value.map((r) => r.id));
+      form.value.id = maxId + 1;
 
-      this.$router.push("/list-of-users");
+      router.push("/list-of-users");
       // btnLoadingState.value = true;
       axios
         // add the todo entry using post
-        .post("http://localhost:3000/users", this.form)
+        .post("http://localhost:3000/users", form.value)
         .then((response) => {
           if (response.status === 201) {
             // get the current max ID from the table and increment the id for the new item
@@ -205,34 +194,90 @@ export default {
         });
 
       // display a success message
-      this.$q.notify({
+      $q.notify({
         color: "green-4",
         textColor: "white",
         icon: "cloud_done",
         message: "Form Submitted!",
       });
 
-      // reset the form
-      this.$refs.form.reset();
-
       // call resetForm() method
-      this.resetForm();
-    },
-    resetForm() {
+      resetForm();
+    };
+
+    const resetForm = () => {
       // clear the form inputs
-      this.form.name = "";
-      this.form.username = "";
-      this.form.email = "";
-      this.form.address.street = "";
-      this.form.address.suite = "";
-      this.form.address.city = "";
-      this.form.address.zipcode = "";
-      this.form.phone = "";
-      this.form.website = "";
-      this.form.company.name = "";
-      this.form.company.catchPhrase = "";
-      this.form.company.bs = "";
-    },
+      form.value.name = "";
+      form.value.username = "";
+      form.value.email = "";
+      form.value.address.street = "";
+      form.value.address.suite = "";
+      form.value.address.city = "";
+      form.value.address.zipcode = "";
+      form.value.phone = "";
+      form.value.website = "";
+      form.value.company.name = "";
+      form.value.company.catchPhrase = "";
+      form.value.company.bs = "";
+    };
+
+    const editForm = () => {
+      console.log("edit");
+      axios
+        // add the todo entry using post
+        .put(`http://localhost:3000/users/${form.value.id}`, form.value)
+        .then((response) => {
+          if (response.status === 200) {
+            // update the entry in the selected index
+            Object.assign(mergedRows.value[form.value.id], form.value);
+            // reset the input values after update
+            resetForm();
+            rowSelected.value = {};
+          }
+          // btnLoadingState.value = false;
+        });
+
+      // display a success message
+      $q.notify({
+        color: "green-4",
+        textColor: "white",
+        icon: "cloud_done",
+        message: "Query edited!",
+      });
+
+      router.push("/list-of-users");
+    };
+
+    const testInput = () => {
+      form.value.name = "wef";
+      form.value.username = "sdf";
+      form.value.email = "woiejf@gmail.com";
+      form.value.address.street = "wefjo[j]";
+      form.value.address.suite = "oiewjf";
+      form.value.address.city = "woiej";
+      form.value.address.zipcode = "woiejf";
+      form.value.phone = "weifj";
+      form.value.website = "eifj";
+      form.value.company.name = "weifj";
+      form.value.company.catchPhrase = "weifj";
+      form.value.company.bs = "weifj";
+      $q.notify({
+        color: "green-4",
+        textColor: "white",
+        icon: "cloud_done",
+        message: "Tested",
+      });
+    };
+
+    return {
+      form,
+      emailRule,
+      submitForm,
+      resetForm,
+      editForm,
+      testInput,
+      rowSelected,
+    };
   },
 };
 </script>

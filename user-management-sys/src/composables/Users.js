@@ -3,6 +3,7 @@ import axios from "axios";
 
 // initialize mergedRows for nested data
 const mergedRows = ref([]);
+const rowSelected = ref(false);
 
 const getUsers = () => {
   axios.get("http://localhost:3000/users").then((response) => {
@@ -25,5 +26,24 @@ const getUsers = () => {
   });
   return mergedRows;
 };
+const form = ref({
+  id: 1,
+  name: "",
+  username: null,
+  email: null,
+  address: {
+    street: "",
+    suite: "",
+    city: "",
+    zipcode: "",
+  },
+  phone: null,
+  website: null,
+  company: {
+    name: "",
+    catchPhrase: "",
+    bs: "",
+  },
+});
 
-export { mergedRows, getUsers };
+export { mergedRows, getUsers, form, rowSelected };
