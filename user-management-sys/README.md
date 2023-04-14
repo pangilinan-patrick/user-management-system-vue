@@ -10,11 +10,29 @@ A Quasar and Axios project
 
 - Adding to the api with POST
 
+- Updating/Editing data with PUT
+
+- Deleting data with DELETE
+
 - Populating a q-table with data from API endpoint
 
 - How to access the values of nested properties by iterating over each property in the JSON
 
 - Using json-server to host local REST API
+
+- Using actions slots column for table (edit/delete)
+
+- Using composables to house the methods and variables used throughout the project
+
+- Try catch blocks
+
+- Quasar CSS variables
+
+- SCSS Styling
+
+- Validation with :rules
+
+- Changing favicon
 
 ## Hardships
 
