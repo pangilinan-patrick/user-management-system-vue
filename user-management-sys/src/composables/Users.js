@@ -3,6 +3,7 @@ import axios from "axios";
 
 // initialize mergedRows for nested data
 const mergedRows = ref([]);
+// initialize rowSelected to track if an entry is selected
 const rowSelected = ref(false);
 
 const getUsers = () => {
@@ -26,6 +27,8 @@ const getUsers = () => {
   });
   return mergedRows;
 };
+
+// Initialize form
 const form = ref({
   id: 1,
   name: null,

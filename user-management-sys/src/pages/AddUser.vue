@@ -21,11 +21,13 @@
   <div class="q-pa-md q-ma-sm form-container">
     <div class="form-header">
       &nbsp;
+      <!-- Card-title design by Quasar -->
       <h5 class="q-my-none q-mb-md doc-card-title">User Form</h5>
       &nbsp;
     </div>
+    <!-- if there's a selected row, use the editForm function, otherwise, submitForm -->
     <q-form
-      class="q-pa-md form-inside"
+      class="q-pa-lg form-inside"
       @submit.prevent="rowSelected === true ? editForm() : submitForm()"
     >
       <h6 class="q-my-none q-mb-md">User Details</h6>
@@ -37,7 +39,7 @@
           v-model="form.name"
           label="Full Name *"
           required
-        ></q-input>
+        />
         <q-input
           class="col"
           filled
@@ -45,7 +47,7 @@
           label="Username *"
           required
           :rules="[usernameRule()]"
-        ></q-input>
+        />
       </div>
       <div class="q-gutter-md row items-start">
         <q-input
@@ -56,7 +58,7 @@
           type="email"
           required
           :rules="[emailRule()]"
-        ></q-input>
+        />
       </div>
       <div class="q-gutter-md row items-start">
         <q-input
@@ -66,7 +68,7 @@
           label="Phone *"
           required
           :rules="[phoneRule()]"
-        ></q-input>
+        />
         <q-input
           class="col"
           filled
@@ -74,7 +76,7 @@
           label="Website *"
           required
           :rules="[websiteRule()]"
-        ></q-input>
+        />
       </div>
       <!-- address: street, suite, city, zipcode -->
       <h6 class="q-my-none q-mb-md">Address</h6>
@@ -85,21 +87,21 @@
           v-model="form.address.street"
           label="Street *"
           required
-        ></q-input>
+        />
         <q-input
           class="col"
           filled
           v-model="form.address.suite"
           label="Suite *"
           required
-        ></q-input>
+        />
         <q-input
           class="col"
           filled
           v-model="form.address.city"
           label="City *"
           required
-        ></q-input>
+        />
         <q-input
           class="col"
           filled
@@ -107,7 +109,7 @@
           label="Zipcode *"
           required
           :rules="[zipcodeRule()]"
-        ></q-input>
+        />
       </div>
       <!-- Company: name, bs, catchPhrase-->
       <h6 class="q-my-none q-mb-md">Company</h6>
@@ -118,44 +120,50 @@
           v-model="form.company.name"
           label="Company Name *"
           required
-        ></q-input>
+        />
         <q-input
           class="col"
           filled
           v-model="form.company.bs"
           label="BS *"
           required
-        ></q-input>
+        />
         <q-input
           class="col"
           filled
           v-model="form.company.catchPhrase"
           label="Catch Phrase *"
           required
-        ></q-input>
+        />
       </div>
+      <!-- Edit or Add buttons -->
       <q-btn
         type="submit"
         class="form-button"
         :label="rowSelected === true ? 'Edit' : 'Add'"
         :color="rowSelected === true ? 'primary' : 'positive'"
-      ></q-btn>
+      />
+      <!-- Cancel button -->
       <q-btn
         class="form-button"
         label="Cancel"
         color="negative"
         @click="cancelEdit()"
         :class="rowSelected === true ? 'visible' : 'hidden'"
-      ></q-btn>
+      />
       <!-- FOR TESTING PURPOSES -->
-      <!-- <q-btn @click="testInput()" label="Test" color="positive"></q-btn> -->
+      <!-- <q-btn
+        class="form-button"
+        @click="testInput()"
+        label="Test"
+        color="positive"
+      /> -->
     </q-form>
     <div class="form-footer"></div>
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
 import { rowSelected, mergedRows, form } from "../composables/Users";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
@@ -163,6 +171,7 @@ import axios from "axios";
 
 export default {
   setup() {
+    // for notify
     const $q = useQuasar();
     const router = useRouter();
 
@@ -219,109 +228,153 @@ export default {
 
     // -----==== RULES END ====----- //
 
+    // Submit functionality
     const submitForm = () => {
-      // validate the form inputs
+      // Get the highest ID and add 1
       let maxId = 0;
       maxId = Math.max(...mergedRows.value.map((r) => r.id));
       form.value.id = maxId + 1;
 
-      router.push("/list-of-users");
-      // btnLoadingState.value = true;
+      // send the post request using axios
       axios
-        // add the todo entry using post
         .post("http://localhost:3000/users", form.value)
         .then((response) => {
           if (response.status === 201) {
-            // get the current max ID from the table and increment the id for the new item
-            // const maxId = Math.max(...response.data.map((r) => r.id));
             const newItem = { ...response.data, id: maxId + 1 };
-            // console.log(newItem);
             mergedRows.value.unshift(newItem);
+          } else {
+            throw new Error("Network response failed!");
           }
-          // btnLoadingState.value = false;
+        })
+        .then(() => {
+          // Go to list of users for additional feedback
+          router.push("/list-of-users");
+          // display a success message
+          $q.notify({
+            color: "green-4",
+            textColor: "white",
+            icon: "cloud_done",
+            message: "Form Submitted!",
+          });
+
+          // call resetForm() method
+          resetForm();
+        })
+        .catch((error) => {
+          if (axios.isAxiosError(error)) {
+            // display an error message
+            console.error("Error:", error);
+            $q.notify({
+              color: "red-4",
+              textColor: "white",
+              icon: "error",
+              message: `Error: ${error.message}`,
+            });
+          }
         });
-
-      // display a success message
-      $q.notify({
-        color: "green-4",
-        textColor: "white",
-        icon: "cloud_done",
-        message: "Form Submitted!",
-      });
-
-      // call resetForm() method
-      resetForm();
     };
 
     const resetForm = () => {
       // clear the form inputs
-      form.value.name = "";
-      form.value.username = "";
-      form.value.email = "";
-      form.value.address.street = "";
-      form.value.address.suite = "";
-      form.value.address.city = "";
-      form.value.address.zipcode = "";
-      form.value.phone = "";
-      form.value.website = "";
-      form.value.company.name = "";
-      form.value.company.catchPhrase = "";
-      form.value.company.bs = "";
+      Object.assign(form.value, {
+        name: "",
+        username: "",
+        email: "",
+        address: {
+          street: "",
+          suite: "",
+          city: "",
+          zipcode: "",
+        },
+        phone: "",
+        website: "",
+        company: {
+          name: "",
+          catchPhrase: "",
+          bs: "",
+        },
+      });
     };
 
+    // Cancel edit button
     const cancelEdit = () => {
       resetForm();
 
       rowSelected.value = {};
+      $q.notify({
+        color: "blue-4",
+        textColor: "white",
+        icon: "notifications",
+        message: "Operation cancelled.",
+      });
       router.push("/list-of-users");
     };
 
+    // Edit functionality
     const editForm = () => {
       axios
-        // add the todo entry using post
+        // edit the selected todo entry using PUT
         .put(`http://localhost:3000/users/${form.value.id}`, form.value)
         .then((response) => {
           if (response.status === 200) {
             // update the entry in the selected index
-            Object.assign(mergedRows.value[form.value.id], form.value);
+            mergedRows.value[form.value.id] = {
+              ...mergedRows.value[form.value.id],
+              ...form.value,
+            };
             // reset the input values after update
           }
           // btnLoadingState.value = false;
-        });
+        })
+        .then(() => {
+          // display a success message
+          $q.notify({
+            color: "green-4",
+            textColor: "white",
+            icon: "cloud_done",
+            message: "Query edited!",
+          });
 
-      // display a success message
+          resetForm();
+          rowSelected.value = {};
+          router.push("/list-of-users");
+        })
+        .catch((error) => {
+          if (axios.isAxiosError(error)) {
+            // display an error message
+            console.error("Error:", error);
+            $q.notify({
+              color: "red-4",
+              textColor: "white",
+              icon: "error",
+              message: `Error: ${error.message}`,
+            });
+          }
+        });
+    };
+
+    // FOR TESTING PURPOSES
+    // Uncomment the return and the button to use
+    const testInput = () => {
+      form.value.name = "Arnold";
+      form.value.username = "Schwarzenegger";
+      form.value.email = "arnold@gmail.com";
+      form.value.address.street = "Chopper";
+      form.value.address.suite = "Government";
+      form.value.address.city = "Berlin";
+      form.value.address.zipcode = "324";
+      form.value.phone = "09238423985";
+      form.value.website = "arnold.pixel8";
+      form.value.company.name = "Arnold Corp.";
+      form.value.company.catchPhrase = "Get to the choppa!";
+      form.value.company.bs = "Lorem Ipsum";
       $q.notify({
         color: "green-4",
         textColor: "white",
         icon: "cloud_done",
-        message: "Query edited!",
+        message: "Tested",
       });
-
-      resetForm();
-      router.push("/list-of-users");
     };
-
-    // FOR TESTING PURPOSES
-    // const testInput = () => {
-    //   form.value.name = "wef";
-    //   form.value.username = "sadfawefaweff";
-    //   form.value.email = "woiejf@gmail.com";
-    //   form.value.address.street = "wefjo[j]";
-    //   form.value.address.suite = "oiewjf";
-    //   form.value.address.city = "woiej";
-    //   form.value.address.zipcode = "324";
-    //   form.value.phone = "09238423985";
-    //   form.value.website = "eifj.pixel8";
-    //   form.value.company.name = "weifj";
-    //   form.value.company.catchPhrase = "weifj";
-    //   form.value.company.bs = "weifj";
-    //   $q.notify({
-    //     color: "green-4",
-    //     textColor: "white",
-    //     icon: "cloud_done",
-    //     message: "Tested",
-    //   });
-    // };
 
     return {
       form,

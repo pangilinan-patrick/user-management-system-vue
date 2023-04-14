@@ -8,8 +8,10 @@ import axios from "axios";
 export default {
   name: "list-of-users",
   setup() {
+    // For notify and dialog
     const $q = useQuasar();
 
+    // Initialization of table columns
     let columns = ref([
       {
         name: "actions",
@@ -103,21 +105,28 @@ export default {
       },
     ]);
 
+    // GET request to populate table
     getUsers();
 
+    // For routing to the add user page
     const router = useRouter();
 
+    // Edit Function
     function editSelected(selected) {
+      // Add the selected values into the form
       form.value = {
         ...selected.value,
         address: { ...selected.value.address },
         company: { ...selected.value.company },
       };
       rowSelected.value = true;
+      // Go to add user page
       router.push("/add-user");
     }
 
+    // Delete function
     const deleteSelected = (selected) => {
+      // Modal dialog for confirmation
       $q.dialog({
         dark: true,
         title: "Confirm",
@@ -125,29 +134,42 @@ export default {
         cancel: true,
         persistent: true,
       })
-        .onOk(() => {
-          axios
-            // delete the selected entry
-            .delete(`http://localhost:3000/users/${selected.value.id}`)
-            .then((response) => {
-              if (response.status === 200) {
-                // create a new array without the selected row using filter
-                mergedRows.value = mergedRows.value.filter(
-                  (row) => row.id !== selected.value.id
-                );
+        // Send PUT request after confirming and removing selected value
+        .onOk(async () => {
+          try {
+            const response = await axios.delete(
+              `http://localhost:3000/users/${selected.value.id}`
+            );
+            // if success
+            if (response.status === 200) {
+              // create a new array without the selected row using filter
+              mergedRows.value = mergedRows.value.filter(
+                (row) => row.id !== selected.value.id
+              );
+              rowSelected.value = {};
 
-                rowSelected.value = {};
-              }
-              // btnLoadingState.value = false;
-            });
-
-          // display a success message
-          $q.notify({
-            color: "red-4",
-            textColor: "white",
-            icon: "clear",
-            message: `Deleted entry ID ${selected.value.id}!`,
-          });
+              // display a success message
+              $q.notify({
+                color: "red-4",
+                textColor: "white",
+                icon: "clear",
+                message: `Deleted entry ID ${selected.value.id}!`,
+              });
+            } else {
+              throw new Error("Network response failed!");
+            }
+          } catch (error) {
+            if (axios.isAxiosError(error)) {
+              console.error("Error:", error);
+              // display an error message
+              $q.notify({
+                color: "red-4",
+                textColor: "white",
+                icon: "error",
+                message: `Error: ${error.message}`,
+              });
+            }
+          }
         })
         .onCancel(() => {
           $q.notify({
@@ -176,6 +198,7 @@ export default {
       :columns="columns"
       row-key="id"
     >
+      <!-- column for the actions (edit, delete) -->
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
