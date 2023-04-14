@@ -9,6 +9,7 @@ export default {
   name: "list-of-users",
   setup() {
     // For notify and dialog
+    let deleteBtnLoadingState = ref(false);
     const $q = useQuasar();
 
     // Initialization of table columns
@@ -126,6 +127,7 @@ export default {
 
     // Delete function
     const deleteSelected = (selected) => {
+      deleteBtnLoadingState.value = true;
       // Modal dialog for confirmation
       $q.dialog({
         dark: true,
@@ -155,6 +157,7 @@ export default {
                 icon: "clear",
                 message: `Deleted entry ID ${selected.value.id}!`,
               });
+              deleteBtnLoadingState.value = false;
             } else {
               throw new Error("Network response failed!");
             }
@@ -168,6 +171,7 @@ export default {
                 icon: "error",
                 message: `Error: ${error.message}`,
               });
+              deleteBtnLoadingState.value = false;
             }
           }
         })
@@ -178,10 +182,17 @@ export default {
             icon: "notifications",
             message: "Operation cancelled.",
           });
+          deleteBtnLoadingState.value = false;
         });
     };
 
-    return { columns, mergedRows, editSelected, deleteSelected };
+    return {
+      columns,
+      mergedRows,
+      editSelected,
+      deleteSelected,
+      deleteBtnLoadingState,
+    };
   },
 };
 </script>
@@ -209,6 +220,7 @@ export default {
           />
           <q-btn
             @click="deleteSelected(props.value)"
+            :loading="deleteBtnLoadingState"
             class="q-pa-xs q-ma-xs"
             color="negative"
             icon="delete"

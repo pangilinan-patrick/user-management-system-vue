@@ -140,6 +140,7 @@
       <q-btn
         type="submit"
         class="form-button"
+        :loading="btnLoadingState"
         :label="rowSelected === true ? 'Edit' : 'Add'"
         :color="rowSelected === true ? 'primary' : 'positive'"
       />
@@ -164,6 +165,7 @@
 </template>
 
 <script>
+import { ref } from "vue";
 import { rowSelected, mergedRows, form } from "../composables/Users";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
@@ -172,6 +174,7 @@ import axios from "axios";
 export default {
   setup() {
     // for notify
+    const btnLoadingState = ref(false);
     const $q = useQuasar();
     const router = useRouter();
 
@@ -230,6 +233,7 @@ export default {
 
     // Submit functionality
     const submitForm = () => {
+      btnLoadingState.value = true;
       // Get the highest ID and add 1
       let maxId = 0;
       maxId = Math.max(...mergedRows.value.map((r) => r.id));
@@ -257,6 +261,7 @@ export default {
             message: "Form Submitted!",
           });
 
+          btnLoadingState.value = false;
           // call resetForm() method
           resetForm();
         })
@@ -270,6 +275,7 @@ export default {
               icon: "error",
               message: `Error: ${error.message}`,
             });
+            btnLoadingState.value = false;
           }
         });
     };
@@ -312,6 +318,7 @@ export default {
 
     // Edit functionality
     const editForm = () => {
+      btnLoadingState.value = true;
       axios
         // edit the selected todo entry using PUT
         .put(`http://localhost:3000/users/${form.value.id}`, form.value)
@@ -338,6 +345,7 @@ export default {
           resetForm();
           rowSelected.value = {};
           router.push("/list-of-users");
+          btnLoadingState.value = false;
         })
         .catch((error) => {
           if (axios.isAxiosError(error)) {
@@ -349,6 +357,7 @@ export default {
               icon: "error",
               message: `Error: ${error.message}`,
             });
+            btnLoadingState.value = false;
           }
         });
     };
@@ -389,6 +398,7 @@ export default {
       cancelEdit,
       // testInput,
       rowSelected,
+      btnLoadingState,
     };
   },
 };
