@@ -1,3 +1,43 @@
+<!-- 
+  USER MANAGEMENT SYSTEM
+  By Patrick Pangilinan
+  DLSL 
+-->
+
+<template>
+  <q-page class="q-ma-x1">
+    <!-- table showing the data fetched from API -->
+    <q-table
+      flat
+      bordered
+      title="List of Users"
+      class="my-sticky-column-table q-ma-md"
+      :rows="mergedRows"
+      :columns="columns"
+      row-key="id"
+    >
+      <!-- column for the actions (edit, delete) -->
+      <template v-slot:body-cell-actions="props">
+        <q-td :props="props">
+          <q-btn
+            @click="editSelected(props.value)"
+            class="q-pa-xs q-ma-xs"
+            color="primary"
+            icon="edit"
+          />
+          <q-btn
+            @click="deleteSelected(props.value)"
+            :loading="deleteBtnLoadingState"
+            class="q-pa-xs q-ma-xs"
+            color="negative"
+            icon="delete"
+          />
+        </q-td>
+      </template>
+    </q-table>
+  </q-page>
+</template>
+
 <script>
 import { ref } from "vue";
 import { rowSelected, getUsers, mergedRows, form } from "../composables/Users";
@@ -196,37 +236,3 @@ export default {
   },
 };
 </script>
-
-<template>
-  <q-page class="q-ma-x1">
-    <!-- table showing the data fetched from API -->
-    <q-table
-      flat
-      bordered
-      title="List of Users"
-      class="my-sticky-column-table q-ma-md"
-      :rows="mergedRows"
-      :columns="columns"
-      row-key="id"
-    >
-      <!-- column for the actions (edit, delete) -->
-      <template v-slot:body-cell-actions="props">
-        <q-td :props="props">
-          <q-btn
-            @click="editSelected(props.value)"
-            class="q-pa-xs q-ma-xs"
-            color="primary"
-            icon="edit"
-          />
-          <q-btn
-            @click="deleteSelected(props.value)"
-            :loading="deleteBtnLoadingState"
-            class="q-pa-xs q-ma-xs"
-            color="negative"
-            icon="delete"
-          />
-        </q-td>
-      </template>
-    </q-table>
-  </q-page>
-</template>

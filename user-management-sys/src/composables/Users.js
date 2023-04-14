@@ -1,3 +1,7 @@
+// USER MANAGEMENT SYSTEM
+// By Patrick Pangilinan
+// DLSL
+
 import { ref } from "vue";
 import axios from "axios";
 

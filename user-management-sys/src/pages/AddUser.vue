@@ -17,6 +17,12 @@
     Add a clear button to remove selected when editing
 -->
 
+<!-- 
+  USER MANAGEMENT SYSTEM
+  By Patrick Pangilinan
+  DLSL 
+-->
+
 <template>
   <div class="q-pa-md q-ma-sm form-container">
     <div class="form-header">
