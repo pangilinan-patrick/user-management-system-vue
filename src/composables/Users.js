@@ -11,7 +11,7 @@ const mergedRows = ref([]);
 const rowSelected = ref(false);
 
 const getUsers = () => {
-  axios.get("http://localhost:3000/users").then((response) => {
+  axios.get("https://jsonplaceholder.typicode.com/users").then((response) => {
     // impute the value of response into each row
     // iterate over each property of response.data
     mergedRows.value = response.data.map((row) => {

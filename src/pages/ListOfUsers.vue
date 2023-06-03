@@ -180,7 +180,7 @@ export default {
         .onOk(async () => {
           try {
             const response = await axios.delete(
-              `http://localhost:3000/users/${selected.value.id}`
+              `https://jsonplaceholder.typicode.com/users/${selected.value.id}`
             );
             // if success
             if (response.status === 200) {

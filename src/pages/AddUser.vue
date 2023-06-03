@@ -247,7 +247,7 @@ export default {
 
       // send the post request using axios
       axios
-        .post("http://localhost:3000/users", form.value)
+        .post("https://jsonplaceholder.typicode.com/users/", form.value)
         .then((response) => {
           if (response.status === 201) {
             const newItem = { ...response.data, id: maxId + 1 };
@@ -327,7 +327,10 @@ export default {
       btnLoadingState.value = true;
       axios
         // edit the selected todo entry using PUT
-        .put(`http://localhost:3000/users/${form.value.id}`, form.value)
+        .put(
+          `https://jsonplaceholder.typicode.com/users/${form.value.id}`,
+          form.value
+        )
         .then((response) => {
           if (response.status === 200) {
             // update the entry in the selected index
